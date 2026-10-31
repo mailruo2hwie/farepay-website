@@ -6,17 +6,18 @@
     <title>FarePay | Экосистема</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
-        /* === БАЗА === */
+        /* === БАЗА И ПЕРЕМЕННЫЕ === */
         :root {
-            --bg-main: #0a0a0c;
-            --bg-card: #141416;
-            --bg-hover: #1f1f22;
+            --bg-main: #050505; /* Сделал фон еще темнее для контраста со стеклом */
+            --bg-card: rgba(20, 20, 22, 0.6); /* Полупрозрачный фон для стекла */
+            --bg-hover: rgba(30, 30, 35, 0.8);
             --accent: #ff6b00;
-            --accent-hover: #e65c00;
-            --accent-glow: rgba(255, 107, 0, 0.3);
+            --accent-hover: #ff852b;
+            --accent-glow: rgba(255, 107, 0, 0.25);
             --text-main: #ffffff;
-            --text-muted: #8b8b93;
-            --border: #2a2a2e;
+            --text-muted: #9e9eab;
+            --border: rgba(255, 255, 255, 0.08); /* Полупрозрачная рамка */
+            --border-hover: rgba(255, 107, 0, 0.5);
         }
 
         * {
@@ -32,7 +33,20 @@
             color: var(--text-main);
             line-height: 1.5;
             overflow-x: hidden;
+            position: relative;
         }
+
+        /* === ФОНОВОЕ СВЕЧЕНИЕ (Чтобы стекло смотрелось круто) === */
+        .bg-glow {
+            position: fixed;
+            border-radius: 50%;
+            filter: blur(120px);
+            z-index: -1;
+            opacity: 0.4;
+            pointer-events: none; /* Чтобы не мешало кликать */
+        }
+        .glow-1 { top: -10%; left: -10%; width: 50vw; height: 50vw; background: rgba(255, 107, 0, 0.3); }
+        .glow-2 { bottom: -10%; right: -10%; width: 40vw; height: 40vw; background: rgba(255, 107, 0, 0.15); }
 
         a { text-decoration: none; color: inherit; }
         button { cursor: pointer; border: none; font-family: inherit; }
@@ -43,7 +57,6 @@
             padding: 120px 20px 60px;
             max-width: 1200px;
             margin: 0 auto;
-            background: radial-gradient(circle at 50% -20%, rgba(255, 107, 0, 0.15) 0%, transparent 60%);
         }
 
         .badge {
@@ -57,7 +70,8 @@
             font-size: 14px;
             font-weight: 600;
             margin-bottom: 24px;
-            border: 1px solid rgba(255, 107, 0, 0.2);
+            border: 1px solid var(--border-hover);
+            backdrop-filter: blur(10px);
         }
 
         .hero h1 {
@@ -65,6 +79,7 @@
             font-weight: 800;
             margin-bottom: 16px;
             letter-spacing: -1px;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.5);
         }
 
         .hero p {
@@ -74,7 +89,7 @@
             margin-bottom: 40px;
         }
 
-        /* === КАРТОЧКИ НАВИГАЦИИ === */
+        /* === КАРТОЧКИ НАВИГАЦИИ (СТЕКЛО) === */
         .container {
             max-width: 1200px;
             margin: 0 auto;
@@ -90,33 +105,44 @@
 
         .nav-card {
             background: var(--bg-card);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
             border: 1px solid var(--border);
-            border-radius: 16px;
+            border-radius: 20px;
             padding: 24px;
-            transition: 0.3s;
             display: flex;
             flex-direction: column;
             position: relative;
             overflow: hidden;
+            /* Плавная анимация */
+            transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
         }
 
         .nav-card:hover {
             background: var(--bg-hover);
-            border-color: var(--accent);
-            transform: translateY(-2px);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            border-color: var(--border-hover);
+            transform: translateY(-6px) scale(1.02); /* Приподнимается и увеличивается */
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4), 0 0 20px var(--accent-glow);
         }
 
         .nav-card-icon {
-            width: 44px;
-            height: 44px;
-            background: #1f1f22;
-            border-radius: 12px;
+            width: 48px;
+            height: 48px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 14px;
             display: flex;
             align-items: center;
             justify-content: center;
             margin-bottom: 16px;
-            font-size: 22px;
+            font-size: 24px;
+            transition: 0.3s;
+        }
+
+        .nav-card:hover .nav-card-icon {
+            background: rgba(255, 107, 0, 0.15);
+            border-color: var(--accent);
+            transform: scale(1.1) rotate(5deg); /* Иконка чуть крутится */
         }
 
         .nav-card h3 {
@@ -137,17 +163,25 @@
             gap: 24px;
         }
 
-        /* Большой баннер */
+        /* Большой баннер (Тоже стекло) */
         .big-banner {
-            background: linear-gradient(135deg, #1a1005 0%, #0a0a0c 100%);
+            background: linear-gradient(135deg, rgba(30, 20, 10, 0.7) 0%, var(--bg-card) 100%);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
             border: 1px solid var(--border);
-            border-radius: 20px;
+            border-radius: 24px;
             padding: 40px;
             position: relative;
             overflow: hidden;
             display: flex;
             flex-direction: column;
             justify-content: center;
+            transition: 0.4s;
+        }
+        
+        .big-banner:hover {
+            border-color: rgba(255, 107, 0, 0.3);
+            box-shadow: 0 10px 40px rgba(255, 107, 0, 0.1);
         }
 
         .big-banner::before {
@@ -158,7 +192,7 @@
             width: 300px;
             height: 300px;
             background: var(--accent);
-            filter: blur(100px);
+            filter: blur(80px);
             opacity: 0.2;
             border-radius: 50%;
         }
@@ -184,10 +218,10 @@
             align-items: center;
             justify-content: center;
             padding: 14px 28px;
-            border-radius: 12px;
+            border-radius: 14px;
             font-size: 16px;
             font-weight: 600;
-            transition: 0.2s;
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
             position: relative;
             z-index: 1;
             gap: 10px;
@@ -201,20 +235,24 @@
 
         .btn-primary:hover {
             background: var(--accent-hover);
-            box-shadow: 0 6px 20px var(--accent-glow);
-            transform: translateY(-1px);
+            box-shadow: 0 8px 25px rgba(255, 107, 0, 0.5);
+            transform: translateY(-2px) scale(1.02);
         }
 
         .btn-secondary {
-            background: rgba(255, 255, 255, 0.08);
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.1);
             color: #fff;
         }
 
         .btn-secondary:hover {
-            background: rgba(255, 255, 255, 0.15);
+            background: rgba(255, 255, 255, 0.1);
+            border-color: #fff;
+            transform: translateY(-2px) scale(1.02);
         }
 
-        /* Сайдбар */
+        /* Сайдбар (Виджеты из стекла) */
         .sidebar {
             display: flex;
             flex-direction: column;
@@ -223,9 +261,17 @@
 
         .widget {
             background: var(--bg-card);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
             border: 1px solid var(--border);
             border-radius: 20px;
             padding: 24px;
+            transition: 0.4s;
+        }
+
+        .widget:hover {
+            border-color: var(--border-hover);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
         }
 
         .widget-title {
@@ -263,6 +309,8 @@
 
         .feature-card {
             background: var(--bg-card);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
             border: 1px solid var(--border);
             border-radius: 20px;
             padding: 30px;
@@ -271,6 +319,13 @@
             align-items: center;
             overflow: hidden;
             position: relative;
+            transition: 0.4s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-4px);
+            border-color: var(--border-hover);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.4);
         }
 
         .feature-content {
@@ -294,13 +349,19 @@
             justify-content: center;
             font-size: 40px;
             z-index: 0;
+            transition: 0.4s;
+        }
+
+        .feature-card:hover .feature-img {
+            transform: scale(1.2);
         }
 
         /* === ПОДВАЛ === */
         footer {
             border-top: 1px solid var(--border);
             padding: 60px 20px;
-            background: #050505;
+            background: rgba(5, 5, 5, 0.8);
+            backdrop-filter: blur(10px);
         }
 
         .footer-grid {
@@ -318,52 +379,65 @@
         .footer-col h4 { font-size: 16px; margin-bottom: 20px; font-weight: 600; }
         .footer-col ul { list-style: none; display: flex; flex-direction: column; gap: 12px; }
         .footer-col a { color: var(--text-muted); font-size: 14px; transition: 0.2s; }
-        .footer-col a:hover { color: var(--accent); }
+        .footer-col a:hover { color: var(--accent); padding-left: 5px; }
 
-        /* === МОДАЛКА ОПЛАТЫ === */
+        /* === МОДАЛКА ОПЛАТЫ (СТЕКЛО + БЛЮР) === */
         .modal-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.85);
-            backdrop-filter: blur(8px);
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
             display: none; align-items: center; justify-content: center;
             z-index: 1000; padding: 20px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
         }
-        .modal-overlay.active { display: flex; }
+        .modal-overlay.active { display: flex; opacity: 1; }
+        
         .modal {
-            background: var(--bg-card);
+            background: rgba(20, 20, 22, 0.85);
             border: 1px solid var(--border);
-            border-radius: 24px;
+            border-radius: 28px;
             padding: 32px;
             width: 100%; max-width: 440px;
             text-align: center;
             position: relative;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+            box-shadow: 0 30px 60px rgba(0,0,0,0.6), 0 0 40px rgba(255, 107, 0, 0.1);
+            transform: translateY(20px);
+            transition: transform 0.3s ease;
         }
+        .modal-overlay.active .modal {
+            transform: translateY(0);
+        }
+        
         .modal h2 { font-size: 24px; margin-bottom: 12px; }
         .modal p { color: var(--text-muted); font-size: 14px; margin-bottom: 24px; }
         
         .pay-amount {
-            font-size: 42px; font-weight: 800; color: var(--accent);
+            font-size: 48px; font-weight: 800; color: var(--accent);
             margin-bottom: 24px; letter-spacing: -1px;
+            text-shadow: 0 0 20px var(--accent-glow);
         }
         
         .requisites {
             background: rgba(255, 255, 255, 0.03);
-            border: 1px dashed var(--border);
-            padding: 16px; border-radius: 12px;
+            border: 1px dashed var(--border-hover);
+            padding: 16px; border-radius: 14px;
             margin-bottom: 24px;
             font-size: 18px; font-weight: 600;
-            cursor: pointer; transition: 0.2s;
+            cursor: pointer; transition: 0.3s;
             color: #fff;
         }
-        .requisites:hover { background: rgba(255, 107, 0, 0.05); border-color: var(--accent); }
+        .requisites:hover { background: rgba(255, 107, 0, 0.1); border-color: var(--accent); transform: scale(1.02); }
         .requisites span { display: block; font-size: 12px; color: var(--text-muted); font-weight: 400; margin-bottom: 4px; }
 
         .close-btn {
-            position: absolute; top: 16px; right: 16px;
-            background: none; color: var(--text-muted); font-size: 24px;
+            position: absolute; top: 20px; right: 20px;
+            background: rgba(255,255,255,0.05); border-radius: 50%;
+            width: 32px; height: 32px; display: flex; align-items: center; justify-content: center;
+            color: var(--text-muted); font-size: 20px; transition: 0.2s;
         }
-        .close-btn:hover { color: #fff; }
+        .close-btn:hover { background: #ff3b3b; color: #fff; transform: rotate(90deg); }
 
         /* Адаптивность */
         @media (max-width: 992px) {
@@ -385,6 +459,9 @@
     </style>
 </head>
 <body>
+    <!-- Светящиеся пятна на фоне -->
+    <div class="bg-glow glow-1"></div>
+    <div class="bg-glow glow-2"></div>
 
     <!-- HERO СЕКЦИЯ -->
     <header class="hero">
@@ -401,12 +478,12 @@
         
         <!-- БЫСТРАЯ НАВИГАЦИЯ -->
         <div class="nav-cards">
-            <a href="https://drive.google.com/file/d/1-wtngcjFferr9Y5xvQunrZy1khHRfaXn/view?usp=drive_link" class="nav-card">
+            <a href="#android" class="nav-card">
                 <div class="nav-card-icon">🤖</div>
                 <h3>Android версия</h3>
                 <p>Скачать .apk файл</p>
             </a>
-            <a href="https://mailruo2hwie.github.io/bus_iphone/" class="nav-card">
+            <a href="#ios" class="nav-card">
                 <div class="nav-card-icon">🍏</div>
                 <h3>iOS версия</h3>
                 <p>Ссылка на GitHub</p>
@@ -451,7 +528,7 @@
                     <ul class="activity-list">
                         <li class="activity-item"><span>Версия Android</span> <b>v2.1.0</b></li>
                         <li class="activity-item"><span>Обновление iOS</span> <b>Недавно</b></li>
-                        <li class="activity-item"><span>Статус серверов</span> <b style="color: #00ff66;">Онлайн</b></li>
+                        <li class="activity-item"><span>Статус серверов</span> <b style="color: #00ff66; text-shadow: 0 0 10px rgba(0,255,102,0.4);">Онлайн</b></li>
                     </ul>
                 </div>
 
@@ -545,11 +622,10 @@
             <div class="pay-amount">399 ₽</div>
             
             <div class="requisites" onclick="copyCard()">
-                <span>Номер карты / телефон (нажмите чтобы скопировать)</span>
-                +7 (900) 938-56-48
+                <span>Номер карты / Телефон (нажмите чтобы скопировать)</span>
+                +7 (999) 123-45-67 <!-- ЗАМЕНИ НА СВОЙ НОМЕР -->
             </div>
             
-            <!-- Ссылка в ТГ для отправки чека -->
             <a href="https://t.me/Demon_of_latvia" target="_blank" class="btn btn-primary" style="width: 100%;">
                 Я оплатил, отправить чек
             </a>
@@ -575,11 +651,11 @@
         });
 
         function copyCard() {
-            const text = '+79009385648'; // ТУТ СВОЙ НОМЕР
+            const text = '+79991234567'; // ЗАМЕНИ НА СВОЙ НОМЕР БЕЗ ПРОБЕЛОВ
             navigator.clipboard.writeText(text).then(() => {
                 const req = document.querySelector('.requisites');
                 const originalText = req.innerHTML;
-                req.innerHTML = '<span style="color:#00ff66;">Скопировано!</span>' + text;
+                req.innerHTML = '<span style="color:#00ff66; text-shadow: 0 0 10px rgba(0,255,102,0.5);">✓ Успешно скопировано!</span>' + text;
                 setTimeout(() => {
                     req.innerHTML = originalText;
                 }, 2000);
